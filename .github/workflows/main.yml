@@ -1,4 +1,4 @@
-name: Build-OpenWrt
+name: N1-OpenWrt-0306v2
 
 on:
   push:
@@ -41,6 +41,16 @@ jobs:
         cd /home/runner/openwrt
         ./scripts/feeds update -a 
         ./scripts/feeds install -a
+    - name: Change theme
+      run: |
+        cd /home/runner/openwrt/package/lean
+        rm -rf luci-theme-argon
+        git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git
+        sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' '/home/runner/openwrt/feeds/luci/collections/luci/Makefile'
+    - name: Clone config
+      run: |
+        cd /home/runner/openwrt/
+        wget https://raw.githubusercontent.com/kwokwai6618/openwrt-config/master/.config
     - name: Before Build
       run: |
         /bin/bash /home/runner/work/build-openwrt/build-openwrt/before_build.sh
